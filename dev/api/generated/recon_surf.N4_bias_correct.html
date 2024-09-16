@@ -5,13 +5,13 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="recon_surf.paint_cc_into_pred" href="recon_surf.paint_cc_into_pred.html" /><link rel="prev" title="recon_surf.map_surf_label" href="recon_surf.map_surf_label.html" />
 
-    <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>recon_surf.N4_bias_correct - FastSurfer</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -90,19 +90,6 @@
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
   <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
     <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -143,7 +130,7 @@
       <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
       <path d="M13.5 6.5l4 4" />
       <path d="M20 21l2 -2l-2 -2" />
-      <path d="M17 17l-2 2l2 2" /
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
   <symbol id="svg-eye" viewBox="0 0 24 24">
@@ -230,6 +217,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../scripts/index.html">Scripts</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Scripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/BATCH.html">BATCH: brun_fastsurfer.sh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/SLURM.html">SLURM: srun_fastsurfer.sh</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../scripts/advanced.html">Advanced scripts</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Advanced scripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../scripts/fastsurfercnn.html">FastSurferCNN: run_prediction.py</a></li>
@@ -347,6 +335,7 @@
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.map_surf_label.html">recon_surf.map_surf_label</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">recon_surf.N4_bias_correct</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.paint_cc_into_pred.html">recon_surf.paint_cc_into_pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recon_surf.rewrite_oriented_surface.html">recon_surf.rewrite_oriented_surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.rewrite_mc_surface.html">recon_surf.rewrite_mc_surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.rotate_sphere.html">recon_surf.rotate_sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.sample_parc.html">recon_surf.sample_parc</a></li>
@@ -400,7 +389,7 @@
 <span id="recon-surf-n4-bias-correct"></span><h1>recon_surf.N4_bias_correct<a class="headerlink" href="#module-recon_surf.N4_bias_correct" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.get_brain_centroid">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">get_brain_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L593-L616"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.get_brain_centroid" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">get_brain_centroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L594-L617"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.get_brain_centroid" title="Link to this definition">¶</a></dt>
 <dd><p>Get the brain centroid from a binary image.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -411,7 +400,7 @@
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></dt><dd><p>Brain centroid.</p>
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></dt><dd><p>Brain centroid.</p>
 </dd>
 </dl>
 </dd>
@@ -420,7 +409,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.get_image_mean">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">get_image_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L570-L590"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.get_image_mean" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">get_image_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L571-L591"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.get_image_mean" title="Link to this definition">¶</a></dt>
 <dd><p>Get the mean of a sitk Image.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -442,7 +431,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.get_tal_origin_voxel">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">get_tal_origin_voxel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L521-L544"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.get_tal_origin_voxel" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">get_tal_origin_voxel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L522-L545"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.get_tal_origin_voxel" title="Link to this definition">¶</a></dt>
 <dd><p>Get the origin of Talairach space in voxel coordinates.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -455,7 +444,7 @@
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl>
-<dt><strong>vox_origin</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>Voxel coordinate of Talairach origin.</p>
+<dt><strong>vox_origin</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>Voxel coordinate of Talairach origin.</p>
 </dd>
 </dl>
 </dd>
@@ -464,7 +453,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.itk_n4_bfcorrection">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">itk_n4_bfcorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shrink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L235-L300"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.itk_n4_bfcorrection" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">itk_n4_bfcorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shrink</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L236-L301"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.itk_n4_bfcorrection" title="Link to this definition">¶</a></dt>
 <dd><p>Perform the bias field correction.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -494,7 +483,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.normalize_img">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">normalize_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_intensity</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L430-L472"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.normalize_img" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">normalize_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_intensity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_intensity</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L431-L473"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.normalize_img" title="Link to this definition">¶</a></dt>
 <dd><p>Normalize image by source and target intensity values.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -521,7 +510,7 @@ None is optional.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.normalize_wm_aseg">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">normalize_wm_aseg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_aseg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_wm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">110.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_bg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L373-L427"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.normalize_wm_aseg" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">normalize_wm_aseg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_aseg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_wm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">110.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_bg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L374-L428"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.normalize_wm_aseg" title="Link to this definition">¶</a></dt>
 <dd><p>Normalize WM image so the white matter has a mean intensity of target_wm and the
 background has intensity target_bg.</p>
 <dl class="field-list">
@@ -535,7 +524,7 @@ background has intensity target_bg.</p>
 </dd>
 <dt><strong>radius</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, default=50</span></dt><dd><p>Radius of ball around centroid. Defaults to 50.</p>
 </dd>
-<dt><strong>centroid</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Image centroid. Defaults to None.</p>
+<dt><strong>centroid</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Image centroid. Defaults to None.</p>
 </dd>
 <dt><strong>target_wm</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Target white matter intensity. Defaults to 110.</p>
 </dd>
@@ -554,7 +543,7 @@ background has intensity target_bg.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.normalize_wm_mask_ball">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">normalize_wm_mask_ball</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_wm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">110.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_bg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L303-L370"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.normalize_wm_mask_ball" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">normalize_wm_mask_ball</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itk_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itk_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_wm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">110.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_bg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L304-L371"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.normalize_wm_mask_ball" title="Link to this definition">¶</a></dt>
 <dd><p>Normalize WM image by Mask and optionally ball around talairach center.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -565,7 +554,7 @@ background has intensity target_bg.</p>
 </dd>
 <dt><strong>radius</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, default=50</span></dt><dd><p>Radius of ball around centroid. Defaults to 50.</p>
 </dd>
-<dt><strong>centroid</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>Brain centroid.</p>
+<dt><strong>centroid</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>Brain centroid.</p>
 </dd>
 <dt><strong>target_wm</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Target white matter intensity. Defaults to 110.</p>
 </dd>
@@ -584,7 +573,7 @@ background has intensity target_bg.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.options_parse">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">options_parse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L122-L232"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.options_parse" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">options_parse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L123-L233"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.options_parse" title="Link to this definition">¶</a></dt>
 <dd><p>Command line option parser.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -598,7 +587,7 @@ background has intensity target_bg.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="recon_surf.N4_bias_correct.read_talairach_xfm">
-<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">read_talairach_xfm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L475-L518"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.read_talairach_xfm" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">recon_surf.N4_bias_correct.</span></span><span class="sig-name descname"><span class="pre">read_talairach_xfm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/recon_surf/N4_bias_correct.py#L476-L519"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#recon_surf.N4_bias_correct.read_talairach_xfm" title="Link to this definition">¶</a></dt>
 <dd><p>Read Talairach transform.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -709,10 +698,9 @@ background has intensity target_bg.</p>
 </div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     </body>
 </html>

@@ -5,13 +5,13 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="HypVINN.data_loader.dataset" href="HypVINN.data_loader.dataset.html" /><link rel="prev" title="HypVINN.data_loader" href="../HypVINN_dataloader.html" />
 
-    <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>HypVINN.data_loader.data_utils - FastSurfer</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=387cc868" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -90,19 +90,6 @@
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
   <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
     <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -143,7 +130,7 @@
       <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
       <path d="M13.5 6.5l4 4" />
       <path d="M20 21l2 -2l-2 -2" />
-      <path d="M17 17l-2 2l2 2" /
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
   <symbol id="svg-eye" viewBox="0 0 24 24">
@@ -230,6 +217,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../scripts/index.html">Scripts</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Scripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/BATCH.html">BATCH: brun_fastsurfer.sh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/SLURM.html">SLURM: srun_fastsurfer.sh</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../scripts/advanced.html">Advanced scripts</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Advanced scripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../scripts/fastsurfercnn.html">FastSurferCNN: run_prediction.py</a></li>
@@ -347,6 +335,7 @@
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.map_surf_label.html">recon_surf.map_surf_label</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.N4_bias_correct.html">recon_surf.N4_bias_correct</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.paint_cc_into_pred.html">recon_surf.paint_cc_into_pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recon_surf.rewrite_oriented_surface.html">recon_surf.rewrite_oriented_surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.rewrite_mc_surface.html">recon_surf.rewrite_mc_surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.rotate_sphere.html">recon_surf.rotate_sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="recon_surf.sample_parc.html">recon_surf.sample_parc</a></li>
@@ -400,21 +389,21 @@
 <span id="hypvinn-data-loader-data-utils"></span><h1>HypVINN.data_loader.data_utils<a class="headerlink" href="#module-HypVINN.data_loader.data_utils" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="HypVINN.data_loader.data_utils.calculate_flip_orientation">
-<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">calculate_flip_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iornt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_ornt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L32-L62"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.calculate_flip_orientation" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">calculate_flip_orientation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iornt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_ornt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L34-L64"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.calculate_flip_orientation" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the flip orientation transform.</p>
 <p>ornt[N, 1] is flip of axis N, where 1 means no flip and -1 means flip.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>iornt</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>Initial orientation.</p>
+<dt><strong>iornt</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>Initial orientation.</p>
 </dd>
-<dt><strong>base_ornt</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>Base orientation.</p>
+<dt><strong>base_ornt</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>Base orientation.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl>
-<dt><strong>new_iornt</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>New orientation.</p>
+<dt><strong>new_iornt</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>New orientation.</p>
 </dd>
 </dl>
 </dd>
@@ -423,7 +412,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="HypVINN.data_loader.data_utils.hypo_map_label2subseg">
-<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">hypo_map_label2subseg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapped_subseg</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L183-L206"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.hypo_map_label2subseg" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">hypo_map_label2subseg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapped_subseg</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L185-L208"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.hypo_map_label2subseg" title="Link to this definition">¶</a></dt>
 <dd><p>Perform look-up table mapping from label space to subseg space.</p>
 <p>This function is used to perform a look-up table mapping from label space to subseg
 space.</p>
@@ -445,7 +434,7 @@ space.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="HypVINN.data_loader.data_utils.hypo_map_prediction_sagittal2full">
-<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">hypo_map_prediction_sagittal2full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction_sag</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L209-L232"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.hypo_map_prediction_sagittal2full" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">hypo_map_prediction_sagittal2full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction_sag</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L211-L234"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.hypo_map_prediction_sagittal2full" title="Link to this definition">¶</a></dt>
 <dd><p>Remap the prediction on the sagittal network to full label space.</p>
 <p>This function is used to remap the prediction on the sagittal network to the full
 label space used by the coronal and axial networks.</p>
@@ -467,7 +456,7 @@ label space used by the coronal and axial networks.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="HypVINN.data_loader.data_utils.hypo_map_subseg_2_fsseg">
-<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">hypo_map_subseg_2_fsseg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subseg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L235-L271"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.hypo_map_subseg_2_fsseg" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">hypo_map_subseg_2_fsseg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subseg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L237-L273"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.hypo_map_subseg_2_fsseg" title="Link to this definition">¶</a></dt>
 <dd><p>Remap HypVINN internal labels to FastSurfer Labels and vice versa.</p>
 <p>This function is used to remap HypVINN internal labels to FastSurfer Labels and vice
 versa. If the <code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse</span></code> parameter is set to False, the function will map HypVINN
@@ -494,7 +483,7 @@ labels to FastSurfer labels. If True, remap FastSurfer labels to HypVINN labels.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="HypVINN.data_loader.data_utils.reorient_img">
-<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">reorient_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_img</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L65-L93"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.reorient_img" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">reorient_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_img</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L67-L95"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.reorient_img" title="Link to this definition">¶</a></dt>
 <dd><p>Reorient a Nibabel image based on the orientation of a reference nibabel image.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -516,19 +505,19 @@ labels to FastSurfer labels. If True, remap FastSurfer labels to HypVINN labels.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="HypVINN.data_loader.data_utils.rescale_image">
-<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">rescale_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_data</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L155-L180"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.rescale_image" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">rescale_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_data</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L157-L182"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.rescale_image" title="Link to this definition">¶</a></dt>
 <dd><p>Rescale the image data to the range [0, 255].</p>
 <p>This function rescales the input image data to the range [0, 255].</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>img_data</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>The image data to rescale.</p>
+<dt><strong>img_data</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>The image data to rescale.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></dt><dd><p>The rescaled image data.</p>
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></dt><dd><p>The rescaled image data.</p>
 </dd>
 </dl>
 </dd>
@@ -537,7 +526,7 @@ labels to FastSurfer labels. If True, remap FastSurfer labels to HypVINN labels.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="HypVINN.data_loader.data_utils.transform_axial2coronal">
-<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">transform_axial2coronal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axial2coronal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L96-L122"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.transform_axial2coronal" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">transform_axial2coronal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axial2coronal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L98-L124"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.transform_axial2coronal" title="Link to this definition">¶</a></dt>
 <dd><p>Transforms a volume into the coronal axis and back.</p>
 <p>This function is used to transform a volume into the coronal axis and back. The
 transformation is done by moving the axes of the volume. If the <code class="xref py py-obj docutils literal notranslate"><span class="pre">axial2coronal</span></code>
@@ -546,7 +535,7 @@ is set to False, the function will transform from coronal to axial.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>vol</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>The image volume to transform.</p>
+<dt><strong>vol</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>The image volume to transform.</p>
 </dd>
 <dt><strong>axial2coronal</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">bool</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>A flag to determine the direction of the transformation. If True, transform from
 axial to coronal. If False, transform from coronal to axial. (Default: True).</p>
@@ -555,7 +544,7 @@ axial to coronal. If False, transform from coronal to axial. (Default: True).</p
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></dt><dd><p>The transformed volume.</p>
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></dt><dd><p>The transformed volume.</p>
 </dd>
 </dl>
 </dd>
@@ -564,7 +553,7 @@ axial to coronal. If False, transform from coronal to axial. (Default: True).</p
 
 <dl class="py function">
 <dt class="sig sig-object py" id="HypVINN.data_loader.data_utils.transform_axial2sagittal">
-<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">transform_axial2sagittal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axial2sagittal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L125-L152"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.transform_axial2sagittal" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">HypVINN.data_loader.data_utils.</span></span><span class="sig-name descname"><span class="pre">transform_axial2sagittal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axial2sagittal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/deep-mi/FastSurfer/blob/dev/HypVINN/data_loader/data_utils.py#L127-L154"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#HypVINN.data_loader.data_utils.transform_axial2sagittal" title="Link to this definition">¶</a></dt>
 <dd><p>Transforms a volume into the sagittal axis and back.</p>
 <p>This function is used to transform a volume into the sagittal axis and back. The
 transformation is done by moving the axes of the volume. If the <code class="xref py py-obj docutils literal notranslate"><span class="pre">axial2sagittal</span></code>
@@ -573,7 +562,7 @@ is set to False, the function will transform from sagittal to axial.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>vol</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>The image volume to transform.</p>
+<dt><strong>vol</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></span></dt><dd><p>The image volume to transform.</p>
 </dd>
 <dt><strong>axial2sagittal</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="docutils literal notranslate"><span class="pre">bool</span></code></a>, default=True</span></dt><dd><p>A flag to determine the direction of the transformation. If True, transform from
 axial to sagittal. If False, transform from sagittal to axial. (Default: True).</p>
@@ -582,7 +571,7 @@ axial to sagittal. If False, transform from sagittal to axial. (Default: True).<
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></dt><dd><p>The transformed volume.</p>
+<dt><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code></a></dt><dd><p>The transformed volume.</p>
 </dd>
 </dl>
 </dd>
@@ -675,10 +664,9 @@ axial to sagittal. If False, transform from sagittal to axial. (Default: True).<
 </div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/scripts/furo.js?v=4e2eecee"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     </body>
 </html>

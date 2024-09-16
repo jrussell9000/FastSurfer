@@ -5,13 +5,13 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Installation" href="INSTALL.html" /><link rel="prev" title="User Guide" href="index.html" />
 
-    <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Introduction to FastSurfer - FastSurfer</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=387cc868" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -90,19 +90,6 @@
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
   <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
     <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -143,7 +130,7 @@
       <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
       <path d="M13.5 6.5l4 4" />
       <path d="M20 21l2 -2l-2 -2" />
-      <path d="M17 17l-2 2l2 2" /
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
   <symbol id="svg-eye" viewBox="0 0 24 24">
@@ -230,6 +217,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../scripts/index.html">Scripts</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Scripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/BATCH.html">BATCH: brun_fastsurfer.sh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/SLURM.html">SLURM: srun_fastsurfer.sh</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../scripts/advanced.html">Advanced scripts</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Advanced scripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../scripts/fastsurfercnn.html">FastSurferCNN: run_prediction.py</a></li>
@@ -347,6 +335,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../api/generated/recon_surf.map_surf_label.html">recon_surf.map_surf_label</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/generated/recon_surf.N4_bias_correct.html">recon_surf.N4_bias_correct</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/generated/recon_surf.paint_cc_into_pred.html">recon_surf.paint_cc_into_pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/generated/recon_surf.rewrite_oriented_surface.html">recon_surf.rewrite_oriented_surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/generated/recon_surf.rewrite_mc_surface.html">recon_surf.rewrite_mc_surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/generated/recon_surf.rotate_sphere.html">recon_surf.rotate_sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../api/generated/recon_surf.sample_parc.html">recon_surf.sample_parc</a></li>
@@ -407,7 +396,7 @@
 <li><p>In a container (<a class="reference internal" href="INSTALL.html#singularity"><span class="std std-ref">Singularity</span></a> or <a class="reference internal" href="INSTALL.html#docker"><span class="std std-ref">Docker</span></a>) (OS: <a class="reference internal" href="INSTALL.html#linux"><span class="std std-ref">Linux</span></a>, <a class="reference internal" href="INSTALL.html#windows"><span class="std std-ref">Windows</span></a>, <a class="reference internal" href="INSTALL.html#docker-currently-only-supported-for-intel-cpus"><span class="std std-ref">MacOS on Intel</span></a>),</p></li>
 <li><p>As a <a class="reference internal" href="INSTALL.html#native-ubuntu-20-04-or-ubuntu-22-04"><span class="std std-ref">native install</span></a> (all OS for segmentation part).</p></li>
 </ol>
-<p>We recommended you use Singularity or Docker on a Linux host system with a GPU. The images we provide on <a class="reference external" href="https://hub.docker.com/r/deepmi/fastsurfer">DockerHub</a> conveniently include everything needed for FastSurfer. You will also need a <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/License">FreeSurfer license file</a> for the <a class="reference internal" href="../index.html"><span class="std std-ref">Surface pipeline</span></a>. We have detailed per-OS Installation instructions in the <a class="reference internal" href="INSTALL.html"><span class="std std-doc">INSTALL.md file</span></a>.</p>
+<p>We recommended you use Singularity or Docker on a Linux host system with a GPU. The images we provide on <a class="reference external" href="https://hub.docker.com/r/deepmi/fastsurfer">DockerHub</a> conveniently include everything needed for FastSurfer. You will also need a <a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/fswiki/License">FreeSurfer license file</a> for the <a class="reference internal" href="../index.html"><span class="doc std std-ref">Surface pipeline</span></a>. We have detailed per-OS Installation instructions in the <a class="reference internal" href="INSTALL.html"><span class="std std-doc">INSTALL.md file</span></a>.</p>
 </section>
 <section id="usage">
 <h3>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h3>
@@ -426,9 +415,9 @@
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">--nv</span></code> flag is needed to allow FastSurfer to run on the GPU (otherwise FastSurfer will run on the CPU).</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">--no-home</span></code> flag tells singularity to not mount the home directory (see <a class="reference internal" href="singularity.html"><span class="std std-ref">Singularity documentation</span></a> for more info).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--no-home</span></code> flag tells singularity to not mount the home directory (see <a class="reference internal" href="singularity.html"><span class="doc std std-ref">Singularity documentation</span></a> for more info).</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">-B</span></code> flag is used to tell singularity, which folders FastSurfer can read and write to.</p>
-<p>See also <strong><a class="reference internal" href="EXAMPLES.html#example-2-fastsurfer-singularity"><span class="std std-ref">Example 2</span></a></strong> for a full singularity FastSurfer run command and <a class="reference internal" href="singularity.html"><span class="std std-ref">the Singularity documentation</span></a> for details on more singularity flags.</p>
+<p>See also <strong><a class="reference internal" href="EXAMPLES.html#example-2-fastsurfer-singularity"><span class="std std-ref">Example 2</span></a></strong> for a full singularity FastSurfer run command and <a class="reference internal" href="singularity.html"><span class="doc std std-ref">the Singularity documentation</span></a> for details on more singularity flags.</p>
 <p>(b) For <strong>docker</strong>, the syntax is</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docker run --gpus all \
            -v /home/user/my_mri_data:/data \
@@ -441,7 +430,7 @@
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">--gpus</span></code> flag is needed to allow FastSurfer to run on the GPU (otherwise FastSurfer will run on the CPU).</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">-v</span></code> flag is used to tell docker, which folders FastSurfer can read and write to.</p>
-<p>See also <strong><a class="reference internal" href="EXAMPLES.html#example-1-fastsurfer-docker"><span class="std std-ref">Example 1</span></a></strong> for a full FastSurfer run inside a Docker container and <a class="reference internal" href="docker.html"><span class="std std-ref">the Docker documentation</span></a> for more details on the docker flags including <code class="docutils literal notranslate"><span class="pre">--rm</span></code> and <code class="docutils literal notranslate"><span class="pre">--user</span></code>.</p>
+<p>See also <strong><a class="reference internal" href="EXAMPLES.html#example-1-fastsurfer-docker"><span class="std std-ref">Example 1</span></a></strong> for a full FastSurfer run inside a Docker container and <a class="reference internal" href="docker.html"><span class="doc std std-ref">the Docker documentation</span></a> for more details on the docker flags including <code class="docutils literal notranslate"><span class="pre">--rm</span></code> and <code class="docutils literal notranslate"><span class="pre">--user</span></code>.</p>
 </li>
 <li><p>For a <strong>native install</strong>, you need to activate your FastSurfer environment (e.g. <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">fastsurfer_gpu</span></code>) and make sure you have added the FastSurfer path to your <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> variable, e.g. <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">PYTHONPATH=$(pwd)</span></code>.</p>
 <p>You will then be able to run fastsurfer with <code class="docutils literal notranslate"><span class="pre">./run_fastsurfer.sh</span> <span class="pre">*fastsurfer-flags*</span></code>.</p>
@@ -511,7 +500,7 @@ Notwithstanding module-specific limitations, resolution should be between 1mm an
 <section id="expert-usage">
 <h2>Expert usage<a class="headerlink" href="#expert-usage" title="Link to this heading">¶</a></h2>
 <p>Individual modules and the surface pipeline can be run independently of the full pipeline script documented in this documentation.
-This is documented in READMEs in subfolders, for example: <a class="reference internal" href="../scripts/fastsurfercnn.html"><span class="std std-ref">whole brain segmentation only with FastSurferVINN</span></a>, <a class="reference internal" href="../scripts/cerebnet.html"><span class="std std-ref">cerebellum sub-segmentation</span></a>, <a class="reference internal" href="../scripts/hypvinn.html"><span class="std std-ref">hypothalamic sub-segmentation</span></a> and <a class="reference internal" href="../scripts/recon_surf.html"><span class="std std-ref">surface pipeline only (recon-surf)</span></a>.</p>
+This is documented in READMEs in subfolders, for example: <a class="reference internal" href="../scripts/fastsurfercnn.html"><span class="doc std std-ref">whole brain segmentation only with FastSurferVINN</span></a>, <a class="reference internal" href="../scripts/cerebnet.html"><span class="doc std std-ref">cerebellum sub-segmentation</span></a>, <a class="reference internal" href="../scripts/hypvinn.html"><span class="doc std std-ref">hypothalamic sub-segmentation</span></a> and <a class="reference internal" href="../scripts/recon_surf.html"><span class="doc std std-ref">surface pipeline only (recon-surf)</span></a>.</p>
 <p>Specifically, the segmentation modules feature options for optimized parallelization of batch processing.</p>
 </section>
 <section id="freesurfer-downstream-modules">
@@ -635,10 +624,9 @@ This is documented in READMEs in subfolders, for example: <a class="reference in
 </div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/scripts/furo.js?v=4e2eecee"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     </body>
 </html>

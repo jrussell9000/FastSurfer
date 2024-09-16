@@ -5,13 +5,13 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="User Guide" href="overview/index.html" />
 
-    <!-- Generated with Sphinx 7.3.7 and Furo 2024.05.06 -->
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>FastSurfer</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=387cc868" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -90,19 +90,6 @@
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
   <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
     <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -143,7 +130,7 @@
       <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
       <path d="M13.5 6.5l4 4" />
       <path d="M20 21l2 -2l-2 -2" />
-      <path d="M17 17l-2 2l2 2" /
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
   <symbol id="svg-eye" viewBox="0 0 24 24">
@@ -230,6 +217,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="scripts/index.html">Scripts</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Scripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="scripts/BATCH.html">BATCH: brun_fastsurfer.sh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scripts/SLURM.html">SLURM: srun_fastsurfer.sh</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="scripts/advanced.html">Advanced scripts</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Advanced scripts</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="scripts/fastsurfercnn.html">FastSurferCNN: run_prediction.py</a></li>
@@ -347,6 +335,7 @@
 <li class="toctree-l3"><a class="reference internal" href="api/generated/recon_surf.map_surf_label.html">recon_surf.map_surf_label</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/generated/recon_surf.N4_bias_correct.html">recon_surf.N4_bias_correct</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/generated/recon_surf.paint_cc_into_pred.html">recon_surf.paint_cc_into_pred</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/generated/recon_surf.rewrite_oriented_surface.html">recon_surf.rewrite_oriented_surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/generated/recon_surf.rewrite_mc_surface.html">recon_surf.rewrite_mc_surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/generated/recon_surf.rotate_sphere.html">recon_surf.rotate_sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/generated/recon_surf.sample_parc.html">recon_surf.sample_parc</a></li>
@@ -415,24 +404,24 @@ FastSurfer is transitioning to sub-millimeter resolution support throughout the 
 </ul>
 <p>Modules (all run by default):</p>
 <ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">asegdkt:</span></code> <a class="reference internal" href="scripts/fastsurfercnn.html"><span class="std std-ref">FastSurferVINN</span></a> for whole brain segmentation (deactivate with <code class="docutils literal notranslate"><span class="pre">--no_asegdkt</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">asegdkt:</span></code> <a class="reference internal" href="scripts/fastsurfercnn.html"><span class="doc std std-ref">FastSurferVINN</span></a> for whole brain segmentation (deactivate with <code class="docutils literal notranslate"><span class="pre">--no_asegdkt</span></code>)</p>
 <ul class="simple">
 <li><p>the core, outputs anatomical segmentation and cortical parcellation and statistics of 95 classes, mimics FreeSurfer’s DKTatlas.</p></li>
-<li><p>requires a T1w image (<a class="reference internal" href="#"><span class="std std-ref">notes on input images</span></a>), supports high-res (up to 0.7mm, experimental beyond that).</p></li>
+<li><p>requires a T1w image (<a class="reference internal" href="#"><span class="doc std std-ref">notes on input images</span></a>), supports high-res (up to 0.7mm, experimental beyond that).</p></li>
 <li><p>performs bias-field correction and calculates volume statistics corrected for partial volume effects (skipped if <code class="docutils literal notranslate"><span class="pre">--no_biasfield</span></code> is passed).</p></li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cereb:</span></code> <a class="reference internal" href="scripts/cerebnet.html"><span class="std std-ref">CerebNet</span></a> for cerebellum sub-segmentation (deactivate with <code class="docutils literal notranslate"><span class="pre">--no_cereb</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">cereb:</span></code> <a class="reference internal" href="scripts/cerebnet.html"><span class="doc std std-ref">CerebNet</span></a> for cerebellum sub-segmentation (deactivate with <code class="docutils literal notranslate"><span class="pre">--no_cereb</span></code>)</p>
 <ul class="simple">
 <li><p>requires <code class="docutils literal notranslate"><span class="pre">asegdkt_segfile</span></code>, outputs cerebellar sub-segmentation with detailed WM/GM delineation.</p></li>
-<li><p>requires a T1w image (<a class="reference internal" href="#"><span class="std std-ref">notes on input images</span></a>), which will be resampled to 1mm isotropic images (no native high-res support).</p></li>
+<li><p>requires a T1w image (<a class="reference internal" href="#"><span class="doc std std-ref">notes on input images</span></a>), which will be resampled to 1mm isotropic images (no native high-res support).</p></li>
 <li><p>calculates volume statistics corrected for partial volume effects (skipped if <code class="docutils literal notranslate"><span class="pre">--no_biasfield</span></code> is passed).</p></li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">hypothal</span></code>: <a class="reference internal" href="scripts/hypvinn.html"><span class="std std-ref">HypVINN</span></a> for hypothalamus subsegmentation (deactivate with <code class="docutils literal notranslate"><span class="pre">no_hypothal</span></code>)</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">hypothal</span></code>: <a class="reference internal" href="scripts/hypvinn.html"><span class="doc std std-ref">HypVINN</span></a> for hypothalamus subsegmentation (deactivate with <code class="docutils literal notranslate"><span class="pre">no_hypothal</span></code>)</p>
 <ul class="simple">
 <li><p>outputs a hypothalamic subsegmentation including 3rd ventricle, c. mammilare, fornix and optic tracts.</p></li>
-<li><p>a T1w image is highly recommended (<a class="reference internal" href="#"><span class="std std-ref">notes on input images</span></a>), supports high-res (up to 0.7mm, but experimental beyond that).</p></li>
+<li><p>a T1w image is highly recommended (<a class="reference internal" href="#"><span class="doc std std-ref">notes on input images</span></a>), supports high-res (up to 0.7mm, but experimental beyond that).</p></li>
 <li><p>allows the additional passing of a T2w image with <code class="docutils literal notranslate"><span class="pre">--t2</span> <span class="pre">&lt;path&gt;</span></code>, which will be registered to the T1w image (see <code class="docutils literal notranslate"><span class="pre">--reg_mode</span></code> option).</p></li>
 <li><p>calculates volume statistics corrected for partial volume effects based on the T1w image (skipped if <code class="docutils literal notranslate"><span class="pre">--no_bias_field</span></code> is passed).</p></li>
 </ul>
@@ -442,7 +431,7 @@ FastSurfer is transitioning to sub-millimeter resolution support throughout the 
 <section id="surface-reconstruction">
 <h3>Surface reconstruction<a class="headerlink" href="#surface-reconstruction" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>approximately 60-90 minutes, <code class="docutils literal notranslate"><span class="pre">--surf_only</span></code> runs only <a class="reference internal" href="scripts/recon_surf.html"><span class="std std-ref">the surface part</span></a>.</p></li>
+<li><p>approximately 60-90 minutes, <code class="docutils literal notranslate"><span class="pre">--surf_only</span></code> runs only <a class="reference internal" href="scripts/recon_surf.html"><span class="doc std std-ref">the surface part</span></a>.</p></li>
 <li><p>supports high-resolution images (up to 0.7mm, experimental beyond that).</p></li>
 </ul>
 </section>
@@ -543,12 +532,10 @@ FastSurfer is transitioning to sub-millimeter resolution support throughout the 
 </div><script src="_static/documentation_options.js?v=5929fcd5"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/scripts/furo.js?v=4e2eecee"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
