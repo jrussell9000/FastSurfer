@@ -28,7 +28,7 @@ Modules (all run by default):
    - requires `asegdkt_segfile`, outputs cerebellar sub-segmentation with detailed WM/GM delineation.
    - requires a T1w image ([notes on input images](#requirements-to-input-images)), which will be resampled to 1mm isotropic images (no native high-res support).
    - calculates volume statistics corrected for partial volume effects (skipped if `--no_biasfield` is passed).
-3. `hypothal`: [HypVINN](HypVINN/README.md) for hypothalamus subsegmentation (deactivate with `no_hypothal`)
+3. `hypothal`: [HypVINN](HypVINN/README.md) for hypothalamus subsegmentation (deactivate with `--no_hypothal`)
    - outputs a hypothalamic subsegmentation including 3rd ventricle, c. mammilare, fornix and optic tracts.
    - a T1w image is highly recommended ([notes on input images](#requirements-to-input-images)), supports high-res (up to 0.7mm, but experimental beyond that).
    - allows the additional passing of a T2w image with `--t2 <path>`, which will be registered to the T1w image (see `--reg_mode` option).
@@ -56,7 +56,7 @@ There are two ways to run FastSurfer (links are to installation instructions):
 1. In a container ([Singularity](doc/overview/INSTALL.md#singularity) or [Docker](doc/overview/INSTALL.md#docker)) (OS: [Linux](doc/overview/INSTALL.md#linux), [Windows](doc/overview/INSTALL.md#windows), [MacOS on Intel](doc/overview/INSTALL.md#docker-currently-only-supported-for-intel-cpus)),
 2. As a [native install](doc/overview/INSTALL.md#native-ubuntu-2004-or-ubuntu-2204) (all OS for segmentation part). 
 
-We recommended you use Singularity or Docker on a Linux host system with a GPU. The images we provide on [DockerHub](https://hub.docker.com/r/deepmi/fastsurfer) conveniently include everything needed for FastSurfer. You will also need a [FreeSurfer license file](https://surfer.nmr.mgh.harvard.edu/fswiki/License) for the [Surface pipeline](#surface-reconstruction). We have detailed per-OS Installation instructions in the [INSTALL.md file](doc/overview/INSTALL.md).
+We recommended you use Singularity or Docker on a Linux host system with a GPU. The images we provide on [DockerHub](https://hub.docker.com/r/deepmi/fastsurfer) conveniently include everything needed for FastSurfer. You will also need a [FreeSurfer license](https://surfer.nmr.mgh.harvard.edu/fswiki/License) file for the [Surface pipeline](#surface-reconstruction). We have detailed per-OS Installation instructions in the [INSTALL.md](doc/overview/INSTALL.md) file.
 
 ### Usage
 
