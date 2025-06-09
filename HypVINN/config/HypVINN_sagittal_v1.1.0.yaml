@@ -18,7 +18,7 @@ MODEL:
   
 DATA:
   SIZES : [320]
-  PATH_HDF5_TRAIN : '/data/train_data_08mm/split5/train_split5_conf_sagittal.hdfs'
+  PATH_HDF5_TRAIN : '/data/train_data_08mm/split5/train_split5_conf_sagittal.hdf5'
   PATH_HDF5_VAL : ''
   PLANE : 'sagittal'
   AUG: ['Scaling','Gaussian','Rotation','Translation','BiasField']

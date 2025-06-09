@@ -1,22 +1,47 @@
 
 # set the binpath variable
-if [ -z "$FASTSURFER_HOME" ]
-then
-  binpath="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/"
-else
-  binpath="$FASTSURFER_HOME/recon_surf/"
+if [[ -z "$FASTSURFER_HOME" ]] ; then binpath="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/"
+else binpath="$FASTSURFER_HOME/recon_surf/"
 fi
 export binpath
 
 # fs_time command from fs60, fs72 fails in parallel mode, use local one
-# also check for failure (e.g. on mac it fails)
-timecmd="${binpath}fs_time"
-$timecmd echo testing &> /dev/null
-if [ "${PIPESTATUS[0]}" -ne 0 ] ; then
-  echo "time command failing, not using time..."
-  timecmd=""
+# also check for failure (e.g. on mac it fails, so we cannot use it there)
+if FSTIME_LOAD=0 "${binpath}fs_time" echo testing &> /dev/null ; then timecmd="${binpath}fs_time"
+else timecmd="" ; echo "INFO: Testing fs_time was not successful, not reporting per-command runtimes."
 fi
 export timecmd
+export LC_NUMERIC="en_US.UTF-8"
+
+function check_create_subjects_dir_properties()
+{
+  # 1: subjects_dir
+  if [[ -z "$1" ]]
+  then
+    echo "ERROR: No subject directory defined via --sd. This is required!"
+    exit 1
+  elif [[ ! -d "$1" ]]
+  then
+    echo "INFO: The subject directory did not exist, creating it now."
+    if [[ "$(id -u)" == 0 ]] ; then echo "WARNING: Creating as root!" ; fi
+    if ! mkdir -p "$1" ; then echo "ERROR: directory creation failed" ; exit 1; fi
+  else
+    if stat --version > /dev/null 2> /dev/null ; then # linux (GNU version of stat, supports --version)
+      user_group=$(stat -c "%u:%g" "$1")
+      world_access=$(stat -c "%a" "$1" | tail -c 2)
+    else # macOS (BSD version of stat)
+      user_group=$(stat -f "%u:%g" "$1")
+      world_access=$(stat -f "%p" "$1" | tail -c 2)
+    fi
+    if [[ "$user_group" == "0:0" ]] && [[ "$(id -u)" != "0" ]] && [[ "$world_access" -lt 6 ]]
+    then
+      echo "ERROR: The subject directory ($1) is owned by root and is not writable."
+      echo "  FastSurfer cannot write results! This can happen if the directory is created"
+      echo "  by docker. Make sure to create the directory before invoking docker!"
+      exit 1
+    fi
+  fi
+}
 
 function RunIt()
 {
@@ -122,23 +147,34 @@ function RunBatchJobs()
 
 function check_allow_root()
 {
-  # Will check, if --allow_root is in arguments (to this function or the parent script) and
-  # print an error message as well as exit.
+  # Will check, if --allow_root is in arguments (to this function) and print an error message
+  # as well as exit.
   # Examples:
   # check_allow_root --arg 0 -> message and exit
+  #
+  # If you want a script to check for allow_root, run `check_allow_root "$@"` inside that script
   # some_script_which_calls_check_allow_root_without_parameters --flag -> message and exit
+  #
+  # ```
+  # ...
+  # check_allow_root "$@"
+  # ...
+  # ```
 
   local allow_root="false"
-  for arg in "${BASH_ARGV[@]}" "$@" ; do if [[ "$arg" == "--allow_root" ]] ; then allow_root="true"; break ; fi ; done
+  for arg in "$@" ; do if [[ "$arg" == "--allow_root" ]] ; then allow_root="true"; break ; fi ; done
 
-  if [[ "$allow_root" != "true" ]] && [[ "$(id -u)" == "0" ]]
+  if [[ "$(id -u)" == "0" ]]
   then
-    echo "ERROR: You are trying to run '$BASH_ARGV0' as root. We advice to avoid running FastSurfer"
-    echo "  as root, because it will lead to files and folders created as root."
+    if [[ "$allow_root" == "true" ]] ; then LABEL="WARNING" ; else LABEL="ERROR" ; fi
+    echo "$LABEL: You are trying to run '$(basename "$BASH_ARGV0")' as root. We recommend to avoid"
+    echo "  running FastSurfer as root, because it will lead to files and folders created as root."
     echo "  If you are running FastSurfer in a docker container, you can specify the user"
     echo "  with '-u \$(id -u):\$(id -g)' (see https://docs.docker.com/engine/reference/run/#user)."
-    echo "  If you want to force running as root, you may pass --allow_root to run_fastsurfer.sh."
-    exit 1
+    if [[ "$allow_root" != "true" ]]; then
+      echo "  If you want to force running as root, you may pass --allow_root to $(basename "$BASH_ARGV0")."
+      exit 1
+    fi
   fi
 }
 
@@ -190,4 +226,39 @@ function echo_quoted()
     sep=" "
   done
   echo ""
+}
+
+function add_file_suffix()
+{
+  # params:
+  # 1: filename
+  # 2: suffix to add
+
+  # example: add_file_suffix /path/to/file.nii.gz suffix -> /path/to/file.suffix.nii.gz
+
+  # file extensions supported:
+  file_extensions=(nii.gz nii mgz stats annot ctab label log txt lta xfm yaml)
+  for extension in "${file_extensions[@]}"
+  do
+    pattern="\.${extension//./\\.}$"
+    if [[ "$1" =~ $pattern ]]
+    then
+      length=$((${#1} - ${#extension}))
+      echo "${1:0:$length}$2.$extension"
+    fi
+  done
+}
+
+
+function check_is_template()
+{
+  # params:
+  # 1: subjects_dir
+  # 2: subject_if
+  if [ ! -f "$1/$2/base-tps.fastsurfer" ] ; then
+    echo "ERROR: $2 is either not found in \$SUBJECTS_DIR or it is not a longitudinal template"
+    echo "  directory (base), which needs to contain base-tps.fastsurfer file. Please ensure that"
+    echo "  the base (template) has been created with long_prepare_template.sh."
+    exit 1
+  fi
 }

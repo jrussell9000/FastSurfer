@@ -45,10 +45,8 @@
 
 
 # Set default values for arguments
-if [[ -z "${BASH_SOURCE[0]}" ]]; then
-    THIS_SCRIPT="$0"
-else
-    THIS_SCRIPT="${BASH_SOURCE[0]}"
+if [[ -z "${BASH_SOURCE[0]}" ]]; then THIS_SCRIPT="$0"
+else THIS_SCRIPT="${BASH_SOURCE[0]}"
 fi
 if [[ -z "$FASTSURFER_HOME" ]]
 then
@@ -68,11 +66,7 @@ interpol="cubic"    # for the final interpolation of all time points in median i
 robust_template_avg_arg=1  # median for template creation (if more than 1 time point)
 
 # default arguments
-batch_size=1
-device="auto"
-viewagg="auto"
 python="python3.10 -s" # avoid user-directory package inclusion
-vox_size="min"
 sd="$SUBJECTS_DIR"
 
 # init variables that need to be passed
@@ -114,10 +108,10 @@ FLAGS:
                             (smallest per-direction voxel size) in the T1w
                             image:
                               If the minimal voxel size is bigger than 0.98mm,
-                                the image is conformed to 1mm isometric.
+                                the image is conformed to 1mm isotropic.
                               If the minimal voxel size is smaller or equal to
                                 0.98mm, the T1w image will be conformed to
-                                isometric voxels of that voxel size.
+                                isotropic voxels of that voxel size.
                             The voxel size (whether set manually or derived)
                             determines whether the surfaces are processed with
                             highres options (below 1mm) or not.
@@ -154,48 +148,34 @@ fi
 # PARSE Command line
 inputargs=("$@")
 POSITIONAL_FASTSURFER=()
+run_pred_flags=()
 i=0
 while [[ $# -gt 0 ]]
 do
 # make key lowercase
-key=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+arg="$1"
+key=$(echo "$arg" | tr '[:upper:]' '[:lower:]')
 
 shift # past argument
 case $key in
   --tid) tid="$1" ; shift ;;
-  --tpids)
-    while [[ $# -gt 0 ]] && [[ $1 != -* ]] 
-    do
-      tpids+=("$1")
-      shift  # past value
-    done
-    ;;
-  --t1s)
-    while [[ $# -gt 0 ]] && [[ $1 != -* ]] 
-    do
-      t1s+=("$1")
-      shift  # past value
-    done
-    ;;
+  --tpids) while [[ $# -gt 0 ]] && [[ $1 != -* ]] ; do tpids+=("$1") ; shift ; done ;;
+  --t1s) while [[ $# -gt 0 ]] && [[ $1 != -* ]] ; do t1s+=("$1") ; shift ; done ;;
   --sd) sd="$1" ; export SUBJECTS_DIR="$1" ; shift  ;;
-  --vox_size) vox_size="$1" ; shift ;;
+  # these flags are passed through to run_prediction.py
+  --vox_size|--device|--viewagg_device|--conform_to_1mm_threshold) run_pred_flags+=("$key" "$1") ; shift ;;
+  --threads|--threads_seg) run_pred_flags+=("--threads" "$1") ; shift ;;
+  --batch) run_pred_flags+=("--batch_size" "$1") ; shift ;;
+  # these known arguments get ignored
+  --aseg_name|--conformed_name|--asegdkt_segfile|--brainmask_name|--seg_log|--qc_log|--parallel|--threads_surf) shift ;;
+  --no_cereb|--no_hypothal|--no_biasfield|--3t) shift ;;
+  --async_io) ;;
+  --fs_license) export FS_LICENSE="$1" ; shift ;;
+  --remove_suffix) echo "ERROR: The --remove_suffix option is not supported by long_prepare_template.sh" ; exit 1 ;;
   -h|--help) usage ; exit ;;
   --py) python="$1" ; shift ;;
-  --device) device="$1" ; shift ;;
-  --batch) batch_size="$1" ; shift ;;
-  --viewagg_device)
-    case "$1" in
-      check)
-        echo "WARNING: the option \"check\" is deprecated for --viewagg_device <device>, use \"auto\"."
-        viewagg="auto"
-        ;;
-      gpu) viewagg="cuda" ;;
-      *) viewagg="$1" ;;
-    esac
-    shift # past value
-    ;;
-  *)    # unknown option get ignored
-    POSITIONAL_FASTSURFER[i]=$key
+  *)    # unknown options also get ignored, but also print warnings
+    POSITIONAL_FASTSURFER[i]="$arg"
     i=$((i + 1))
     ;;
   #*)    # unknown option
@@ -208,49 +188,39 @@ done
 
 ################################## CHECKS ##############################
 
+if [[ "${#POSITIONAL_FASTSURFER[@]}" -gt 0 ]]
+then
+  echo "WARNING: The arguments ${POSITIONAL_FASTSURFER[*]}"
+  echo "  are not recognized and therefore ignored in this (sub-)script!"
+fi
+
 if [ "${#t1s[@]}" -lt 1 ]
 then
-  echo "ERROR: must supply T1 inputs (full head) via --t1s"
+  echo "ERROR: You must supply T1 inputs (full head) via --t1s!"
   exit 1
 fi
 
 if [ "${#tpids[@]}" -lt 1 ]
 then
-  echo "ERROR: must supply time points ids via --tpids"
+  echo "ERROR: You must supply time points ids via --tpids!"
   exit 1
 fi
 
 if [ -z "$tid" ]
 then
-  echo "ERROR: must supply subject template name via --tid"
+  echo "ERROR: You must supply subject template name via --tid!"
   exit 1
 fi
 
 # check that t1s list is same length as tpids
 if [ "${#tpids[@]}" -ne "${#t1s[@]}" ]
 then
-  echo "ERROR: length of tpids must equal t1s"
+  echo "ERROR: The length of tpids must equal t1s!"
   exit 1
 fi
 
 # check that SUBJECTS_DIR exists
-if [[ -z "$SUBJECTS_DIR" ]]
-then
-  echo "ERROR: No subject directory defined via --sd. This is required!"
-  exit 1;
-fi
-if [[ ! -d "${sd}" ]]
-then
-  echo "INFO: The subject directory did not exist, creating it now."
-  if ! mkdir -p "$SUBJECTS_DIR" ; then echo "ERROR: directory creation failed" ; exit 1; fi
-fi
-if [[ "$(stat -c "%u:%g" "$SUBJECTS_DIR")" == "0:0" ]] && [[ "$(id -u)" != "0" ]] && [[ "$(stat -c "%a" "$SUBJECTS_DIR" | tail -c 2)" -lt 6 ]]
-then
-  echo "ERROR: The subject directory ($SUBJECTS_DIR) is owned by root and is not writable. FastSurfer cannot write results! "
-  echo "This can happen if the directory is created by docker. Make sure to create the directory before invoking docker!"
-  exit 1;
-fi
-
+check_create_subjects_dir_properties "$SUBJECTS_DIR"
 
 ################################## SETUP and LOGFILE ##############################
 
@@ -259,10 +229,13 @@ fi
 LF="$SUBJECTS_DIR/$tid/scripts/long_prepare_template.log"
 mkdir -p "$(dirname "$LF")"
 
+export PYTHONPATH
+PYTHONPATH="$FASTSURFER_HOME$([[ -n "$PYTHONPATH" ]] && echo ":$PYTHONPATH")"
 
-if [[ -f "$LF" ]]; then log_existed="true"
-else log_existed="false"
-fi
+## make sure +eo are unset
+set +eo > /dev/null
+
+if [[ -f "$LF" ]]; then log_existed="true" ; else log_existed="false" ; fi
 
 version_args=()
 if [[ -f "$FASTSURFER_HOME/BUILD.info" ]]
@@ -271,44 +244,48 @@ then
 fi
 
 VERSION=$($python "$FASTSURFER_HOME/FastSurferCNN/version.py" "${version_args[@]}")
+code="$?"
+if [[ "$code" != 0 ]] ; then echo "ERROR: Getting the version failed (code=$code), terminating..." ; exit 1 ; fi
 echo "Version: $VERSION" | tee -a "$LF"
 echo "Log file for long_prepare_template" >> "$LF"
-{ date 2>&1 ; echo "" ; } | tee -a "$LF"
-echo "" | tee -a "$LF"
-echo "export SUBJECTS_DIR=$SUBJECTS_DIR" | tee -a "$LF"
-echo "cd `pwd`" | tee -a "$LF"
-echo "$0 ${inputargs[*]}" | tee -a $LF
-echo "" | tee -a "$LF"
-cat "$FREESURFER_HOME/build-stamp.txt" 2>&1 | tee -a "$LF"
-uname -a  2>&1 | tee -a "$LF"
+{
+  date 2>&1
+  echo ""
+  echo ""
+  echo "export SUBJECTS_DIR=$SUBJECTS_DIR"
+  echo "cd `pwd`"
+  echo "$0 ${inputargs[*]}"
+  echo ""
+  cat "$FREESURFER_HOME/build-stamp.txt" 2>&1
+  uname -a  2>&1
+} | tee -a "$LF"
 
 
 ### IF THE SCRIPT GETS TERMINATED, ADD A MESSAGE
+# shellcheck disable=SC2064
 trap "{ echo \"long_prepare_template.sh terminated via signal at \$(date -R)!\" >> \"$LF\" ; }" SIGINT SIGTERM
 
 
 # check that all t1s exist and that geo is the same (after log setup to keep this info in log file)
-geodiff=0
+geodiff=""
 for s in "${t1s[@]}"
 do
   # check if input exist
-  if [ ! -f "$s" ]
+  if [[ ! -f "$s" ]]
   then
     echo "ERROR: Input T1 $s does not exist!" | tee -a "$LF"
     exit 1
   fi
   # check if geometry differs across time
-  if [ "$s" != "${t1s[0]}" ]
+  if [[ "$s" != "${t1s[0]}" ]]
   then
-    cmd="mri_diff --notallow-pix --notallow-geo $s ${t1s[0]}"
-    RunIt "$cmd" $LF
-    if [ "${PIPESTATUS[0]}" -ne 0 ]
-    then
-      geodiff=1
-    fi
+    cmda=(mri_diff --notallow-pix --notallow-geo "$s" "${t1s[0]}" --res-thresh "0.000001")
+    difftext=$("${cmda[@]}")
+    retcode=${PIPESTATUS[0]}
+    if [[ "$retcode" != 0 ]] ; then geodiff+="Comparing $s and ${t1s[0]} (code $retcode):\n$difftext\n" ; fi
   fi
 done
-if [ "$geodiff" == "1" ]
+if [[ -n "$geodiff" ]]
 then
   {
     echo " "
@@ -316,13 +293,17 @@ then
     echo "WARNING: Image parameters differ across time, maybe due to acquisition changes?"
     echo "         Consistent changes in, e.g., resolution can potentially bias a "
     echo "         longitudinal study! You can check image parameters by running mri_info"
-    echo "         on each input image. Will continue in 10 seconds ..."
+    echo "         on each input image."
+    echo "*******************************************************************************"
+    echo "$geodiff"
+    # if we are in a terminal (stdin is a terminal), wait 10 seconds
+    if [[ -t 0 ]] ; then echo "    Will continue in 10 seconds... (Abort with Ctrl+C)" ; fi
+    echo ""
     echo "*******************************************************************************"
     echo " "
   } | tee -a "$LF"
-  sleep 10
+  if [[ -t 0 ]] ; then sleep 10 ; fi
 fi
-
 
 
 ################################### MASK INPUTS ###################################
@@ -343,14 +324,14 @@ for ((i=0;i<${#tpids[@]};++i)); do
   #printf "%s with T1 %s\n" "${tpids[i]}" "${t1s[i]}"
   echo "${tpids[i]} with T1 ${t1s[i]}" | tee -a "$LF"
   mdir="$SUBJECTS_DIR/$tid/long-inputs/${tpids[i]}"
-  mkdir -p $mdir
+  mkdir -p "$mdir"
   # Import (copy) raw inputs (convert to extension format)
   t1input=$mdir/cross_input${extension}
   cmd="mri_convert ${t1s[i]} $t1input"
-  RunIt "$cmd" $LF
+  RunIt "$cmd" "$LF"
   
   # conform !!!!!!! should we conform to some common value, determined from all time points?? !!!!!!
-  # this is relevant if input resolutions differe (which they should not), currently conform min may not work as expected
+  # this is relevant if input resolutions different (which they should not), currently conform min may not work as expected
   #conform="$mdir/T1_conform${extension}"
   #cmd="mri_convert -c ${t1s[i]} $conform"
   #cmd="$python $fastsurfercnndir/data_loader/conform.py -i ${t1s[i]} -o $conform --vox_size $vox_size --dtype any --verbose"
@@ -364,20 +345,19 @@ for ((i=0;i<${#tpids[@]};++i)); do
   mask_name="$mdir/cross_mask${extension}"
   aseg_segfile="$mdir/cross_aseg.auto_noCCseg${extension}"
   seg_log="/dev/null"
-  cmd=($python "$fastsurfercnndir/run_prediction.py" --t1 "$t1input"
+  cmda=($python "$fastsurfercnndir/run_prediction.py" --t1 "$t1input" --async_io
          --asegdkt_segfile "$asegdkt_segfile" --conformed_name "$conformed_name"
          --brainmask_name "$mask_name" --aseg_name "$aseg_segfile" --sid "${tpids[i]}"
-         --seg_log "$seg_log" --vox_size "$vox_size" --batch_size "$batch_size"
-         --viewagg_device "$viewagg" --device "$device")
-  run_it "$LF" "${cmd[@]}"
+         --seg_log "$seg_log" "${run_pred_flags[@]}")
+  run_it "$LF" "${cmda[@]}"
 
   # remove mri subdirectory (run_prediction creates 001 there)
-  cmd=(rm -rf "$mdir/mri")
-  run_it "$LF" "${cmd[@]}"
+  cmda=(rm -rf "$mdir/mri")
+  run_it "$LF" "${cmda[@]}"
   
   # mask is binary, we need to use on conformed image:
-  cmd=(mri_mask "$conformed_name" "$mask_name" "$mdir/cross_brainmask${extension}")
-  run_it "$LF" "${cmd[@]}"
+  cmda=(mri_mask "$conformed_name" "$mask_name" "$mdir/cross_brainmask${extension}")
+  run_it "$LF" "${cmda[@]}"
 done
 
 # skip intensity normalization or bias field removal for now
@@ -396,30 +376,29 @@ done
 # create a file with all time points names
 # this cannot be "base-tps" else recon-surf (and inside recon-all) will fail
 BaseSubjsListFname="$SUBJECTS_DIR/$tid/base-tps.fastsurfer"
-rm -f ${BaseSubjsListFname}
-mkdir -p $SUBJECTS_DIR/$tid/mri/transforms
+rm -f "${BaseSubjsListFname}"
+mkdir -p "$SUBJECTS_DIR/$tid/mri/transforms"
 subjInVols=()
 normInVols=()
 ltaXforms=()
 
 for s in "${tpids[@]}"
 do
-  echo $s
-  echo "${s}" >> ${BaseSubjsListFname}
+  echo "$s" | tee -a "${BaseSubjsListFname}"
   mdir="$SUBJECTS_DIR/$tid/long-inputs/${s}"
   invol="$mdir/cross_conform${extension}"
-  subjInVols+=($invol)
+  subjInVols+=("$invol")
   normvol="$mdir/cross_brainmask${extension}"
-  normInVols+=($normvol)
-  ltaname=${s}_to_${tid}.lta
-  ltaXforms+=(${SUBJECTS_DIR}/$tid/mri/transforms/${ltaname})
+  normInVols+=("$normvol")
+  ltaname="${s}_to_${tid}.lta"
+  ltaXforms+=("${SUBJECTS_DIR}/$tid/mri/transforms/${ltaname}")
 done
 
 
 if [ ${#tpids[@]} == 1 ]
 then
   # if only a single time point, create fake 'base' by making the image upright
-  # this assures that also subjects with a single time point get processes as the other
+  # this assures that also subjects with a single time point get processed as the other
   # subjects in the longitudinal stream
 
   # 1. make the norm upright (base space)
@@ -436,17 +415,17 @@ else #more than 1 time point:
 
 
   # create the 'mean/median' norm volume:
-  cmd="mri_robust_template --mov ${normInVols[@]}"
-  cmd="$cmd --lta ${ltaXforms[@]}"
+  cmd="mri_robust_template --mov ${normInVols[*]}"
+  cmd="$cmd --lta ${ltaXforms[*]}"
   cmd="$cmd --template ${SUBJECTS_DIR}/$tid/mri/base_brainmask${extension}"
   cmd="$cmd --average ${robust_template_avg_arg}"
   cmd="$cmd --sat 4.685"
   RunIt "$cmd" "$LF"
 
   # create the 'mean/median' input (orig) volume:
-  cmd="mri_robust_template --mov ${subjInVols[@]}"
+  cmd="mri_robust_template --mov ${subjInVols[*]}"
   cmd="$cmd --average ${robust_template_avg_arg}"
-  cmd="$cmd --ixforms ${ltaXforms[@]}"
+  cmd="$cmd --ixforms ${ltaXforms[*]}"
   cmd="$cmd --noit"
   t1=${SUBJECTS_DIR}/$tid/mri/orig.mgz
   cmd="$cmd --template $t1"

@@ -48,6 +48,7 @@ def find_device(
     device: torch.device | str = "auto",
     flag_name: str = "device",
     min_memory: int = 0,
+    default_cuda_device: torch.device | str = "cuda",
 ) -> torch.device:
     """
     Create a device object from the device string passed.
@@ -56,14 +57,14 @@ def find_device(
 
     Parameters
     ----------
-    device : torch.device, str
-        The device to search for and test following pytorch device naming
-        conventions, e.g. 'cuda:0', 'cpu', etc. (default: 'auto').
+    device : torch.device, str, default="auto"
+        The device to search for and test following pytorch device naming conventions, e.g. 'cuda:0', 'cpu', etc.
     flag_name : str
         Name of the corresponding flag for error messages (default: 'device').
     min_memory : int
-        The minimum memory in bytes required for cuda-devices to
-        be valid (default: 0, works always).
+        The minimum memory in bytes required for cuda-devices to be valid (default: 0, works always).
+    default_cuda_device : str, torch.device, default="cuda"
+        Default cuda device to use, if cuda is available and device is "auto".
 
     Returns
     -------
@@ -85,20 +86,18 @@ def find_device(
     # If auto detect:
     if str(device) == "auto" or not device:
         # 1st check cuda / also finds AMD ROCm, then mps, finally cpu
-        device = "cuda" if has_cuda else "mps" if has_mps else "cpu"
+        device = default_cuda_device if has_cuda else "mps" if has_mps else "cpu"
 
     device = torch.device(device)
 
     if device.type == "cuda" and min_memory > 0:
         dev_num = torch.cuda.current_device() if device.index is None else device.index
-        total_gpu_memory = torch.cuda.get_device_properties(dev_num).__getattribute__(
-            "total_memory"
-        )
+        total_gpu_memory = torch.cuda.get_device_properties(dev_num).__getattribute__("total_memory")
         if total_gpu_memory < min_memory:
             giga = 1024**3
-            logger.info(
-                f"Found {total_gpu_memory/giga:.1f} GB GPU memory, but "
-                f"{min_memory/giga:.1f} GB was required."
+            logger.warning(
+                f"Found {total_gpu_memory/giga:.1f} GB GPU memory on device {device}, but {min_memory/giga:.1f} GB was "
+                f"required. Falling back to {flag_name} cpu."
             )
             device = torch.device("cpu")
 
@@ -257,10 +256,10 @@ class SubjectDirectory:
     _segfile: str
     _asegdkt_segfile: str
     _main_segfile: str
-    _subject_dir: str
+    _subject_dir: Path
     _id: str
 
-    def __init__(self, **kwargs):
+    def __init__(self, subject_dir: str | Path | None = None, **kwargs):
         """
         Create a subject, supports generic attributes.
 
@@ -278,17 +277,18 @@ class SubjectDirectory:
             Relative or absolute filename of the main segmentation filename.
         asegdkt_segfile : str
             Relative or absolute filename of the aparc+aseg segmentation filename.
-        subject_dir : Path
-            Path to the subjects directory (containing subject folders).
+        subject_dir : Path, optional
+            The Path to the subjects directory (containing subject folders, defaults to current working directory).
         """
+        self._subject_dir = Path.cwd() if subject_dir is None else Path(subject_dir)
         for k, v in kwargs.items():
-            if k == "subject_dir":
-                v = Path(v)
+            if subject_dir is None and not Path(v).is_absolute() and not k == "id":
+                raise ValueError(f"subject/out directory not defined, but {k} ('{v}') is relative!")
             setattr(self, "_" + k, v)
 
     def filename_in_subject_folder(self, filepath: str | Path) -> Path:
         """
-        Return the full path to the file.
+        Construct a full absolute path from the subject directory and the passed filepath.
 
         Parameters
         ----------
@@ -298,7 +298,7 @@ class SubjectDirectory:
         Returns
         -------
         Path
-            Path to the file.
+            The path to the file in the subject folder.
         """
         if Path(filepath).is_absolute():
             return Path(filepath)
@@ -416,9 +416,7 @@ class SubjectDirectory:
         str
             The orig name.
         """
-        assert (
-            hasattr(self, "_orig_name") or "The orig_name attribute has not been set!"
-        )
+        assert hasattr(self, "_orig_name"), "The orig_name attribute has not been set!"
         return self._orig_name
 
     @orig_name.setter
@@ -970,10 +968,7 @@ class SubjectList:
         Try to create the subject directory.
         """
         if self._out_dir is None:
-            LOGGER.info(
-                "No Subjects directory found, absolute paths for filenames are "
-                "required."
-            )
+            LOGGER.info("No Subjects directory found, absolute paths for filenames are required.")
             return
 
         LOGGER.info(f"Output will be stored in Subjects Directory: {self._out_dir}")
@@ -1001,18 +996,12 @@ class SubjectList:
         """
         if isinstance(item, int):
             if item < 0 or item >= self._num_subjects:
-                raise IndexError(
-                    f"The index {item} is out of bounds for the subject list."
-                )
+                raise IndexError(f"The index {item} is out of bounds for the subject list.")
 
             # subject is always an absolute path (or relative to the working directory)
             # ... of the input file
             subject = self._subjects[item]
-            sid = (
-                Path(str(subject).removesuffix(self._remove_suffix)).name
-                if self._sid is None
-                else self._sid
-            )
+            sid = Path(str(subject).removesuffix(self._remove_suffix)).name if self._sid is None else self._sid
         elif isinstance(item, str):
             subject = Path(item)
             sid = item
@@ -1021,16 +1010,8 @@ class SubjectList:
 
         # Set subject and load orig
         special_rules = ["orig_name"]
-        subject_parameters = {
-            v: getattr(self, f"_{v}_")
-            for v in self.__attr_assign.keys()
-            if v not in special_rules
-        }
-        orig_name = (
-            subject
-            if subject.is_file()
-            else subject / self._orig_name_
-        )
+        subject_parameters = {v: getattr(self, f"_{v}_") for v in self.__attr_assign.keys() if v not in special_rules}
+        orig_name = subject if subject.is_file() else subject / self._orig_name_
         return SubjectDirectory(
             subject_dir=self._out_dir,
             id=sid,

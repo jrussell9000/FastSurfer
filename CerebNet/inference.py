@@ -27,16 +27,12 @@ from tqdm import tqdm
 
 from CerebNet.data_loader.augmentation import ToTensorTest
 from CerebNet.data_loader.dataset import SubjectDataset
-from CerebNet.datasets.utils import crop_transform
 from CerebNet.models.networks import build_model
 from CerebNet.utils import checkpoint as cp
+from FastSurferCNN.data_loader.conform import crop_transform
 from FastSurferCNN.utils import PLANES, Plane, logging
-from FastSurferCNN.utils.common import (
-    SerialExecutor,
-    SubjectDirectory,
-    SubjectList,
-    find_device,
-)
+from FastSurferCNN.utils.arg_types import ImageSizeOption, OrientationType
+from FastSurferCNN.utils.common import SerialExecutor, SubjectDirectory, SubjectList, find_device
 from FastSurferCNN.utils.mapper import JsonColorLookupTable, Mapper, TSVLookupTable
 from FastSurferCNN.utils.threads import get_num_threads
 
@@ -55,6 +51,7 @@ class Inference:
     cerebnet_labels: Mapper[str, int]
     cereb_name2fs_id: Mapper[str, int]
     freesurfer_name2id: Mapper[str, int]
+    cereb_id2fs_id: Mapper[int, int]
 
     def __init__(
         self,
@@ -63,6 +60,9 @@ class Inference:
         async_io: bool = False,
         device: str = "auto",
         viewagg_device: str = "auto",
+        orientation: OrientationType = "lia",
+        image_size: ImageSizeOption = "auto",
+        vox_size: float | None = 1.0,
     ):
         """
         Create the inference object to manage inferencing, batch processing, data
@@ -80,6 +80,14 @@ class Inference:
             Device to perform inference on.
         viewagg_device : str, default="auto"
             Device to aggregate views on.
+        vox_size : 1.0, None, default=1.0
+            The voxel size, use None to deactivate the conforming w.r.t. the voxel size.
+        orientation : "native", "soft-<orientation>", "<orientation>", default="native"
+            How the affine should look like.
+        image_size : int, "fov", "auto", None, default=256
+            Conform the image to this image size, e.g. a specific smaller size (for example for high-res), or
+            automatically determine the image size from the field of view ('fov' or 'auto', the former may yield
+            non-cube-images). `None` disables this criterion.
         """
         self.pool = None
         self._threads = None
@@ -89,6 +97,13 @@ class Inference:
         self.pool = ThreadPoolExecutor(self._threads) if async_io else SerialExecutor()
         self.cfg = cfg
         self._async_io = async_io
+        self._conform_kwargs = {
+            "vox_size": vox_size,
+            "img_size": image_size,
+            "orientation": orientation,
+            "order": 1,
+            "dtype": np.uint8,
+        }
 
         # Set random seed from config_files.
         np.random.seed(cfg.RNG_SEED)
@@ -102,6 +117,7 @@ class Inference:
                 viewagg_device,
                 flag_name="viewagg_device",
                 min_memory=2 * (2**30),
+                default_cuda_device=_device,
             )
 
         self.batch_size = cfg.TEST.BATCH_SIZE
@@ -110,9 +126,7 @@ class Inference:
         self.viewagg_device = _viewagg_device
 
 
-        def prep_lut(
-                file: Path, *args, **kwargs,
-        ) -> Future[TSVLookupTable | JsonColorLookupTable]:
+        def prep_lut(file: Path, *args, **kwargs) -> Future[TSVLookupTable | JsonColorLookupTable]:
             _cls = TSVLookupTable
             cls = {".json": JsonColorLookupTable, ".txt": _cls, ".tsv": _cls}
             return self.pool.submit(cls[file.suffix], file, *args, **kwargs)
@@ -134,12 +148,8 @@ class Inference:
 
         self.cerebnet_labels = _cerebnet_mapper.result().labelname2id()
         self.freesurfer_name2id = fs_color_map.result().labelname2id()
-        cereb_name2fs_name: Mapper[str, str] = (
-            cereb2freesurfer_mapper.result().labelname2id()
-        )
-        cerebsag_name2cereb_name: Mapper[str, str] = (
-            sagittal_cereb2cereb_mapper.result().labelname2id()
-        )
+        cereb_name2fs_name: Mapper[str, str] = cereb2freesurfer_mapper.result().labelname2id()
+        cerebsag_name2cereb_name: Mapper[str, str] = sagittal_cereb2cereb_mapper.result().labelname2id()
 
         cereb_id2name = self.cerebnet_labels.__reversed__()
         self.cereb_name2fs_id = cereb_name2fs_name.chain(self.freesurfer_name2id)
@@ -185,13 +195,9 @@ class Inference:
         return dict(zip(PLANES, self.pool.map(_load_model_func, PLANES), strict=False))
 
     @torch.no_grad()
-    def _predict_single_subject(
-        self, subject_dataset: SubjectDataset
-    ) -> dict[Plane, list[torch.Tensor]]:
-        """Predict the classes based on a SubjectDataset."""
-        img_loader = DataLoader(
-            subject_dataset, batch_size=self.batch_size, shuffle=False
-        )
+    def _predict_single_subject(self, subject_dataset: SubjectDataset) -> dict[Plane, list[torch.Tensor]]:
+        """Predict the classes based on a SubjectDataset (operates fully in LIA)."""
+        img_loader = DataLoader(subject_dataset, batch_size=self.batch_size, shuffle=False)
         prediction_logits = {}
         try:
             for plane in PLANES:
@@ -201,8 +207,7 @@ class Inference:
                 from CerebNet.data_loader.data_utils import slice_lia2ras, slice_ras2lia
 
                 for img in img_loader:
-                    # CerebNet is trained on RAS+ conventions, so we need to map between
-                    # lia (FastSurfer) and RAS+
+                    # CerebNet is trained on RAS+ conventions, so we need to map between lia (FastSurfer) and RAS+
                     # map LIA 2 RAS
                     img = slice_lia2ras(plane, img, thick_slices=True)
                     batch = img.to(self.device)
@@ -277,11 +282,7 @@ class Inference:
         """
 
         def _get_ids_startswith(_label_map: dict[int, str], prefix: str) -> list[int]:
-            return [
-                id
-                for id, name in _label_map.items()
-                if name.startswith(prefix) and not name.endswith("Medullare")
-            ]
+            return [id for id, name in _label_map.items() if name.startswith(prefix) and not name.endswith("Medullare")]
 
         freesurfer_id2cereb_name = self.cereb_name2fs_id.__reversed__()
         freesurfer_id2name = self.freesurfer_name2id.__reversed__()
@@ -291,10 +292,7 @@ class Inference:
             47: ("Right", "Right-Cerebellum-Cortex"),
             632: ("Vermis", "Cbm_Vermis"),
         }
-        merge_map = {
-            id: _get_ids_startswith(label_map, prefix=prefix)
-            for id, (prefix, _) in meta_labels.items()
-        }
+        merge_map = {id: _get_ids_startswith(label_map, prefix=prefix) for id, (prefix, _) in meta_labels.items()}
 
         # calculate PVE
         from FastSurferCNN.segstats import pv_calc
@@ -355,9 +353,7 @@ class Inference:
         if cerebnet_seg.shape != orig.shape:
             raise RuntimeError("Cereb segmentation shape inconsistent with Orig shape!")
         logger.info(f"Saving CerebNet cerebellum segmentation at {filename}")
-        return self.pool.submit(
-            save_image, orig.header, orig.affine, cerebnet_seg, filename, dtype=np.int16
-        )
+        return self.pool.submit(save_image, orig.header, orig.affine, cerebnet_seg, filename, dtype=np.int16)
 
     def _get_subject_dataset(
         self, subject: SubjectDirectory
@@ -369,35 +365,27 @@ class Inference:
 
         from FastSurferCNN.data_loader.data_utils import load_image, load_maybe_conform
 
-        norm_file, norm_data, norm = None, None, None
-        if subject.has_attribute("cereb_statsfile"):
+        norm_file, norm_data, _norm = None, None, None
+        if subject.has_attribute("cereb_statsfile") :
             if not subject.can_resolve_attribute("cereb_statsfile"):
                 from FastSurferCNN.utils.parser_defaults import ALL_FLAGS
 
                 raise ValueError(
-                    f"Cannot resolve the intended filename "
-                    f"{subject.get_attribute('cereb_statsfile')} for the "
-                    f"cereb_statsfile, maybe specify an absolute path via "
-                    f"{ALL_FLAGS['cereb_statsfile'](dict)['flag']}."
+                    f"Cannot resolve the intended filename {subject.get_attribute('cereb_statsfile')} for the "
+                    f"cereb_statsfile, maybe specify an absolute path via {ALL_FLAGS['cereb_statsfile'](dict)['flag']}."
                 )
-            if not subject.has_attribute(
-                "norm_name"
-            ) or not subject.fileexists_by_attribute("norm_name"):
+            if not subject.has_attribute("norm_name") or not subject.fileexists_by_attribute("norm_name"):
                 from FastSurferCNN.utils.parser_defaults import ALL_FLAGS
 
                 raise ValueError(
-                    f"Cannot resolve the file name "
-                    f"{subject.get_attribute('norm_name')} for the bias field "
-                    f"corrected image, maybe specify an absolute path via "
-                    f"{ALL_FLAGS['norm_name'](dict)['flag']} or the file does not "
-                    f"exist."
+                    f"Cannot resolve the file name {subject.get_attribute('norm_name')} for the bias field corrected "
+                    f"image, maybe specify an absolute path via {ALL_FLAGS['norm_name'](dict)['flag']} or the file "
+                    f"does not exist."
                 )
 
             norm_file = subject.filename_by_attribute("norm_name")
             # finally, load the bias field file
-            norm = self.pool.submit(
-                load_maybe_conform, norm_file, norm_file, vox_size=1.0
-            )
+            _norm = self.pool.submit(load_maybe_conform, norm_file, norm_file, **self._conform_kwargs)
 
         # localization
         if not subject.fileexists_by_attribute("asegdkt_segfile"):
@@ -405,29 +393,33 @@ class Inference:
                 f"The aseg.DKT-segmentation file '{subject.asegdkt_segfile}' did not "
                 f"exist, please run FastSurferVINN first."
             )
-        seg = self.pool.submit(
-            load_image, subject.filename_by_attribute("asegdkt_segfile")
-        )
+        _seg = self.pool.submit(load_image, subject.filename_by_attribute("asegdkt_segfile"))
         # create conformed image
-        conf_img = self.pool.submit(
+        _conf_img = self.pool.submit(
             load_maybe_conform,
             subject.filename_by_attribute("conf_name"),
             subject.filename_by_attribute("orig_name"),
-            vox_size=1.0,
+            **self._conform_kwargs,
         )
 
-        seg, seg_data = seg.result()
-        conf_file, conf_img, conf_data = conf_img.result()
+        seg, seg_data = _seg.result()
+        conf_file, conf_img, conf_data = _conf_img.result()
+
+        if not np.allclose(conf_img.header.get_zooms(), 1.0, atol=0.01):
+            logger.warning(
+                "CerebNet does not support images that are not conformed to 1.0mm. We detected a voxel sizes of "
+                f"{tuple(conf_img.header.get_zooms())} in {conf_file}!"
+            )
         subject_dataset = SubjectDataset(
             img_org=conf_img,
             brain_seg=seg,
             patch_size=self.cfg.DATA.PATCH_SIZE,
             slice_thickness=self.cfg.DATA.THICKNESS,
-            primary_slice=self.cfg.DATA.PRIMARY_SLICE_DIR,
+            # obsolete: primary_slice=self.cfg.DATA.PRIMARY_SLICE_DIR,
         )
         subject_dataset.transforms = ToTensorTest()
-        if norm is not None:
-            norm_file, _, norm_data = norm.result()
+        if _norm is not None:
+            norm_file, _, norm_data = _norm.result()
         return norm_data, norm_file, subject_dataset
 
     def run(self, subject_dirs: SubjectList):
@@ -443,24 +435,22 @@ class Inference:
                 from FastSurferCNN.utils.common import iterate
             iter_subjects = iterate(self.pool, self._get_subject_dataset, subject_dirs)
             futures = []
-            for idx, (subject, (norm, norm_file, subject_dataset)) in tqdm(
-                enumerate(iter_subjects), total=len(subject_dirs), desc="Subject",
-            ):
+            for idx, (subject, _data) in tqdm(enumerate(iter_subjects), total=len(subject_dirs), desc="Subject"):
+                norm, norm_file, subject_dataset = _data
                 try:
-                    # predict CerebNet, returns logits
+                    # predict CerebNet, returns logits (input and output are LIA)
                     preds = self._predict_single_subject(subject_dataset)
                     # create the folder for the output file, if it does not exist
-                    _mkdir = self.pool.submit(
-                        subject.segfile.parent.mkdir, exist_ok=True, parents=True,
-                    )
+                    _mkdir = self.pool.submit(subject.segfile.parent.mkdir, exist_ok=True, parents=True)
 
-                    # postprocess logits (move axes, map sagittal to all classes)
+                    # postprocess logits (move axes, map sagittal to all classes, still LIA)
                     preds_per_plane = self._post_process_preds(preds)
-                    # view aggregation in logit space and find max label
+                    # view aggregation in logit space and find max label (still LIA)
                     cerebnet_seg = self._view_aggregation(preds_per_plane)
 
-                    # map predictions into FreeSurfer Label space & move segmentation to
-                    # cpu
+                    # transform data from lia to native on demand
+                    cerebnet_seg = subject_dataset.back_to_native(cerebnet_seg)
+                    # map predictions into FreeSurfer Label space & move segmentation to cpu
                     cerebnet_seg = self.cereb_id2fs_id.map(cerebnet_seg).cpu()
                     pred_time = time.time()
 
@@ -475,11 +465,7 @@ class Inference:
                     # this is None, but synchronizes the creation of the directory
                     _ = _mkdir.result()
                     futures.append(
-                        self._save_cerebnet_seg(
-                            full_cereb_seg,
-                            subject.segfile,
-                            subject_dataset.get_nibabel_img(),
-                        )
+                        self._save_cerebnet_seg(full_cereb_seg, subject.segfile, subject_dataset.get_nibabel_img())
                     )
 
                     if subject.has_attribute("cereb_statsfile"):
@@ -509,11 +495,9 @@ class Inference:
                             )
                         )
 
-                    logger.info(
-                        f"Subject {idx + 1}/{len(subject_dirs)} with id "
-                        f"'{subject.id}' processed in {pred_time - start_time :.2f} "
-                        f"sec."
-                    )
+                    duration = pred_time - start_time
+                    num = len(subject_dirs)
+                    logger.info(f"Subject {idx + 1}/{num} with id '{subject.id}' processed in {duration:.2f} sec.")
                 except Exception as e:
                     logger.exception(e)
                     return "\n".join(map(str, e.args))

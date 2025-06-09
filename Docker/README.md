@@ -28,7 +28,7 @@ docker run --gpus all -v /home/user/my_mri_data:/data \
                       --fs_license /fs_license/license.txt \
                       --t1 /data/subjectX/t1-weighted.nii.gz \
                       --sid subjectX --sd /output \
-                      --parallel
+                      --threads 4 --3T # and more flags
 ```
 
 #### Docker Flags
@@ -46,7 +46,7 @@ docker run --gpus all -v /home/user/my_mri_data:/data \
 * The `--t1` points to the t1-weighted MRI image to analyse (full path, with mounted name inside docker: /home/user/my_mri_data => /data)
 * The `--sid` is the subject ID name (output folder name)
 * The `--sd` points to the output directory (its mounted name inside docker: /home/user/my_fastsurfer_analysis => /output)
-* The `--parallel` activates processing left and right hemisphere in parallel
+* [more flags](../doc/overview/FLAGS.md#fastsurfer-flags)
 
 Note, that the paths following `--fs_license`, `--t1`, and `--sd` are __inside__ the container, not global paths on your system, so they should point to the places where you mapped these paths above with the `-v` arguments. 
 
@@ -97,6 +97,8 @@ PYTHONPATH=<FastSurferRoot>
 python build.py --device cuda --tag my_fastsurfer:cuda
 ```
 
+The build script allows more specific options, that specify different CUDA options as well (see `build.py --help`).
+
 For running the analysis, the command is the same as above for the prebuild option:
 ```bash
 docker run --gpus all -v /home/user/my_mri_data:/data \
@@ -105,8 +107,7 @@ docker run --gpus all -v /home/user/my_mri_data:/data \
                       --rm --user $(id -u):$(id -g) my_fastsurfer:cuda \
                       --fs_license /fs_license/license.txt \
                       --t1 /data/subjectX/t1-weighted.nii.gz \
-                      --sid subjectX --sd /output \
-                      --parallel
+                      --sid subjectX --sd /output
 ```
 
 
@@ -119,7 +120,9 @@ PYTHONPATH=<FastSurferRoot>
 python build.py --device cpu --tag my_fastsurfer:cpu
 ```
 
-For running the analysis, the command is basically the same as above for the GPU option:
+As you can see, only the `--device` to the build command is changed from `cuda` to `cpu`. 
+
+For running the analysis, the command is basically the same as above, except for removing the `--gpus all` GPU option:
 ```bash
 docker run -v /home/user/my_mri_data:/data \
            -v /home/user/my_fastsurfer_analysis:/output \
@@ -127,18 +130,15 @@ docker run -v /home/user/my_mri_data:/data \
            --rm --user $(id -u):$(id -g) my_fastsurfer:cpu \
            --fs_license /fs_license/license.txt \
            --t1 /data/subjectX/t1-weighed.nii.gz \
-           --device cpu \
-           --sid subjectX --sd /output \
-           --parallel
+           --sid subjectX --sd /output
 ```
 
-As you can see, only the tag of the image is changed from gpu to cpu and the standard docker is used (no --gpus defined). In addition, the `--device cpu` flag is passed to explicitly turn on CPU usage inside FastSurferCNN.
-
+FastSurfer will automatically detect, that no GPU is available and use the CPU.
 
 ### Example 3: Experimental Build for AMD GPUs
 
 Here we build an experimental image to test performance when running on AMD GPUs. Note that you need a supported OS and Kernel version and supported GPU for the RocM to work correctly. You need to install the Kernel drivers into 
-your host machine kernel (amdgpu-install --usecase=dkms) for the amd docker to work. For this follow:
+your host machine kernel (`amdgpu-install --usecase=dkms`) for the amd docker to work. For this follow:
 https://rocm.docs.amd.com/projects/install-on-linux/en/latest/install/quick-start.html#rocm-install-quick, https://rocm.docs.amd.com/projects/install-on-linux/en/latest/install/amdgpu-install.html#amdgpu-install-dkms and https://rocm.docs.amd.com/projects/install-on-linux/en/latest/how-to/docker.html
 
 ```bash
@@ -190,13 +190,6 @@ To build a docker image with attestation and provenance, i.e. Software Bill Of M
      [[worker.containerd.gcpolicy]]
        all = true
        keepBytes = 1024000000
-   # settings to push to a "local", registry with self-signed certificates
-   # see for example https://tech.paulcz.net/2016/01/secure-docker-with-tls/ https://github.com/paulczar/omgwtfssl
-   [registry."host:5000"]
-     ca=["/path/to/registry/ssl/ca.pem"]
-     [[registry."landau.dzne.ds:5000".keypair]]
-       key="/path/to/registry/ssl/key.pem"
-       cert="/path/to/registry/ssl/cert.pem"
    ```
 3. Attestation files are not supported by the standard docker image storage driver. Therefore, images cannot be tested locally. 
    There are two solutions to this limitation.
@@ -212,3 +205,38 @@ To build a docker image with attestation and provenance, i.e. Software Bill Of M
       ```
       Also note, that the image storage location with containerd is not defined by the docker config file `/etc/docker/daemon.json`, but by the containerd config `/etc/containerd/config.toml`, which will likely not exist. You can [create a default config](https://github.com/containerd/containerd/blob/main/docs/getting-started.md#customizing-containerd) file with `containerd config default > /etc/containerd/config.toml`, in this config file edit the `"root"`-entry (default value is `/var/lib/containerd`).  
 4. Finally, you can now build the FastSurfer image with `python Docker/build.py ... --attest`. This will add the additional flags to the docker build command.
+
+## Building for release
+
+Make sure, you are building on a machine that has [containerd-storage and Buildkit](#build-docker-image-with-attestation-and-provenance).
+
+```bash
+# configuration
+build_dir=$HOME/FastSurfer-build
+img=deepmi/fastsurfer
+# the version can be identified with: $build_dir/run_fastsurfer.sh --version
+version=2.4.3
+# the cuda and rocm version can be identified with: python $build_dir/Docker/build.py --help | grep -E ^[[:space:]]+--device
+cuda=126
+cudas=("cuda118" "cuda124" "cuda$cuda")
+rocm=6.2.4
+rocms=("rocm$rocm")
+# end of config
+
+# code
+git clone --branch stable --single-branch github.com/Deep-MI/FastSurfer $build_dir
+cd $build_dir
+all_tags=("latest" "gpu-latest" "cuda-v$version" "rocm-v$version" "cpu-latest")
+# build all distinct images
+for dev in cpu "${rocms[@]}" "${cudas[@]}"
+do
+  python3 Docker/build.py --tag $img:$dev-v$version --freesurfer_build_image $img-build:freesurfer741 --attest --device $dev
+  all_tags+=("$dev-v$version")
+done
+# labels that are just references
+docker tag $img:rocm$rocm-v$version $img:rocm-v$version
+docker tag $img:cpu-v$version $img:cpu-latest
+for tag in cuda-v$version gpu-latest latest; do docker tag $img:cu$cuda-v$version $img:$tag ; done
+# push all labels
+for tag in "${all_tags[@]}" ; do docker push $img:$tag ; done
+```

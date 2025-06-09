@@ -27,7 +27,8 @@ from torchvision.transforms import Compose
 from CerebNet.data_loader import data_utils as utils
 from CerebNet.data_loader.augmentation import ToTensor
 from CerebNet.datasets.load_data import SubjectLoader
-from CerebNet.datasets.utils import bounding_volume_offset, crop_transform
+from CerebNet.datasets.utils import bounding_volume_offset
+from FastSurferCNN.data_loader.conform import crop_transform, to_target_orientation
 from FastSurferCNN.data_loader.data_utils import (
     get_thick_slices,
     transform_axial,
@@ -239,8 +240,10 @@ class SubjectDataset(Dataset):
         brain_seg: nib.analyze.SpatialImage,
         patch_size: tuple[int, ...],
         slice_thickness: int,
-        primary_slice: str,
+        primary_slice: str | None = None,
     ):
+        from numpy.linalg import inv
+
         self.slice_thickness = slice_thickness
         self.transforms = Compose([ToTensor()])
         self.img_org = img_org
@@ -250,8 +253,6 @@ class SubjectDataset(Dataset):
 
         # binarize the cerebellum from brain_seg
         cereb_aseg_mask = utils.get_aseg_cereb_mask(np.asarray(brain_seg.dataobj))
-
-        from numpy.linalg import inv
 
         affine = inv(brain_seg.affine) @ img_org.affine
 
@@ -263,9 +264,7 @@ class SubjectDataset(Dataset):
             )
             from scipy.ndimage import affine_transform
 
-            cereb_aseg = affine_transform(
-                cereb_aseg_mask.astype(np.float32), affine, output_shape=img_org.shape
-            )
+            cereb_aseg = affine_transform(cereb_aseg_mask.astype(np.float32), affine, output_shape=img_org.shape)
             cereb_aseg_mask = cereb_aseg > 0.5
 
         bbox = self.locate_mask_bbox(cereb_aseg_mask)
@@ -273,35 +272,27 @@ class SubjectDataset(Dataset):
         # create the roi from cereb_aseg (where labels after interpolation > 0.05 --> membership rounded to 1 decimal)
         self.roi: LocalizerROI = {
             "source_shape": img_org.shape,
-            "offsets": bounding_volume_offset(
-                bbox, patch_size, image_shape=cereb_aseg_mask.shape
-            ),
+            "offsets": bounding_volume_offset(bbox, patch_size, image_shape=cereb_aseg_mask.shape),
             "target_shape": patch_size,
         }
         # crop the region of interest
-        img = crop_transform(
-            self.img_org_data,
-            offsets=self.roi["offsets"],
-            target_shape=self.roi["target_shape"],
-        )
+        img = crop_transform(self.img_org_data, offsets=self.roi["offsets"], target_shape=self.roi["target_shape"])
+        # reorient the data to lia
+        img_lia, self.back_to_native = to_target_orientation(img, self.img_org.affine, target_orientation="LIA")
 
         self.images_per_plane = {}
         self.count = 0
         self._plane: Plane = "axial"
         data = {
-            "axial": transform_axial(img),
-            "coronal": img,
-            "sagittal": transform_sagittal(img),
+            "axial": transform_axial(img_lia),
+            "coronal": img_lia,
+            "sagittal": transform_sagittal(img_lia),
         }
         for plane, data_i in data.items():
             # data is transformed to 'plane'-direction in axis 2
-            thick_slices = get_thick_slices(
-                data_i, self.slice_thickness
-            )  # [H, W, n_slices, C]
+            thick_slices = get_thick_slices(data_i, self.slice_thickness)  # [H, W, n_slices, C]
             # it seems x and y are flipped with respect to expectations here
-            self.images_per_plane[plane] = np.transpose(
-                thick_slices, (2, 0, 1, 3)
-            )  # [n_slices, H, W, C]
+            self.images_per_plane[plane] = np.transpose(thick_slices, (2, 0, 1, 3))  # [n_slices, H, W, C]
 
     def locate_mask_bbox(self, mask: npt.NDArray[bool]):
         """Find the largest connected component of the mask.
@@ -326,9 +317,7 @@ class SubjectDataset(Dataset):
     def set_plane(self, plane: Plane):
         """Set the active plane."""
         if plane not in self.images_per_plane.keys():
-            raise ValueError(
-                f"Invalid plane name, must be in {tuple(self.images_per_plane.keys())}"
-            )
+            raise ValueError(f"Invalid plane name, must be in {tuple(self.images_per_plane.keys())}")
         self._plane = plane
 
     @property

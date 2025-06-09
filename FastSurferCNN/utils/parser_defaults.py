@@ -21,9 +21,9 @@ Contains the ALL_FLAGS dictionary, which can be used as follows to add default f
 >>> allows_root = args.root  # instead of the default dest args.allow_root
 
 Values can also be extracted by
->>> print(ALL_FLAGS["allow_root"](dict, dest="root")
->>> # {'flag': '--allow_root', 'flags': ('--allow_root',), 'action': 'store_true',
->>> #  'dest': 'root', 'help': 'Allow execution as root user.'}
+>>> print(ALL_FLAGS["seg_log"](dict, dest="log_file")
+>>> # {'flag': '--seg_log', 'flags': ('--seg_log',), 'type': str, default='', 'dest': 'log_file',
+>>> #  'help': 'Absolute path to file in which run logs will be saved. If not set, logs will not be saved.'}
 """
 
 import argparse
@@ -34,8 +34,10 @@ from pathlib import Path
 from typing import Literal, Optional, Protocol, TypeVar, get_args, get_origin
 
 from FastSurferCNN.utils import PLANES, Plane
+from FastSurferCNN.utils.arg_types import VALID_ORIENTATIONS, OrientationType, unquote_str
 from FastSurferCNN.utils.arg_types import float_gt_zero_and_le_one as __conform_to_one
-from FastSurferCNN.utils.arg_types import unquote_str
+from FastSurferCNN.utils.arg_types import img_size as __image_size
+from FastSurferCNN.utils.arg_types import orientation as __orientation
 from FastSurferCNN.utils.arg_types import vox_size as __vox_size
 from FastSurferCNN.utils.dataclasses import field, get_field
 from FastSurferCNN.utils.threads import get_num_threads
@@ -43,10 +45,9 @@ from FastSurferCNN.utils.threads import get_num_threads
 FASTSURFER_ROOT = Path(__file__).parents[2]
 PLANE_SHORT = {"checkpoint": "ckpt", "config": "cfg"}
 PLANE_HELP = {
-    "checkpoint": "{} checkpoint to load",
-    "config": "Path to the {} config file",
+    "checkpoint": "{} checkpoint to load.",
+    "config": "Path to the {} config file ('none' deactivates the view).",
 }
-VoxSize = Literal["min"] | float
 
 
 class CanAddArguments(Protocol):
@@ -273,12 +274,7 @@ ALL_FLAGS = {
         fieldname="search_tag",
     ),
     "csv_file": __arg("--csv_file", dc=SubjectDirectoryConfig),
-    "batch_size": __arg(
-        "--batch_size",
-        type=int,
-        default=1,
-        help="Batch size for inference. Default=1"
-    ),
+    "batch_size": __arg("--batch_size", type=int, default=1, help="Batch size for inference. Default=1"),
     "sd": __arg("--sd", dc=SubjectDirectoryConfig, fieldname="out_dir"),
     "qc_log": __arg(
         "--qc_log",
@@ -297,6 +293,26 @@ ALL_FLAGS = {
              "experimental) or 'min' (default). A number forces processing at that specific voxel size, 'min' "
              "determines the voxel size from the image itself (conforming to the minimum voxel size, or 1 if the "
              "minimum voxel size is above 0.95mm). ",
+    ),
+    "orientation": __arg(
+        "--orientation",
+        choices=VALID_ORIENTATIONS,
+        type=__orientation,
+        dest="orientation",
+        metavar="{native,XXX,soft-XXX}",
+        default="lia",
+        help="Select the target affine format for output, native: input defined by input image, soft-XXX (e.g. "
+             "soft-lia): store as XXX, but do not interpolate, XXX (e.g. lia): force XXX, affine is only 0 or +-1. "
+             "Default: lia (required by the surface pipeline).",
+    ),
+    "image_size": __arg(
+        "--image_size",
+        type=__image_size,
+        dest="image_size",
+        default="auto",
+        help="Select how the image should be conformed. A positive integer yields a cube of that size, 'fov' yields "
+             "dimensions, so the field of view stays consistent, 'auto' yields a cube of dimensions fully containing "
+             "the field of view (default).",
     ),
     "conform_to_1mm_threshold": __arg(
         "--conform_to_1mm_threshold",
@@ -407,6 +423,9 @@ def add_plane_flags(
     if configtype not in PLANE_SHORT:
         raise ValueError("type must be either config or checkpoint.")
 
+    def cast_type(__value: str) -> Path | None:
+        return None if configtype == "config" and (not bool(__value) or __value.lower() == "none") else Path(__value)
+
     from FastSurferCNN.utils.checkpoint import load_checkpoint_config_defaults
     defaults = load_checkpoint_config_defaults(configtype, defaults_path)
 
@@ -422,7 +441,7 @@ def add_plane_flags(
         plane_short = plane[: index + 2]
         parser.add_argument(
             f"--{PLANE_SHORT[configtype]}_{plane_short}",
-            type=Path,
+            type=cast_type,
             dest=f"{PLANE_SHORT[configtype]}_{plane_short}",
             help=PLANE_HELP[configtype].format(plane),
             default=path,

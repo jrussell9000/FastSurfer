@@ -23,7 +23,7 @@ from torchvision import transforms
 from tqdm import tqdm
 
 import FastSurferCNN.utils.logging as logging
-from FastSurferCNN.data_loader.augmentation import ToTensorTest, ZeroPad2DTest
+from FastSurferCNN.data_loader.augmentation import ToTensorTest
 from FastSurferCNN.utils.common import find_device
 from HypVINN.data_loader.data_utils import hypo_map_prediction_sagittal2full
 from HypVINN.data_loader.dataset import HypVINNDataset
@@ -98,12 +98,11 @@ class Inference:
         else:
             # check, if GPU is big enough to run view agg on it
             # (this currently takes the memory of the passed device)
-            self.viewagg_device = torch.device(
-                find_device(
-                    viewagg_device,
-                    flag_name="viewagg_device",
-                    min_memory=4 * (2 ** 30),
-                )
+            self.viewagg_device = find_device(
+                viewagg_device,
+                flag_name="viewagg_device",
+                min_memory=4 * (2 ** 30),
+                default_cuda_device=self.device,
             )
 
         logger.info(f"Running view aggregation on {self.viewagg_device}")
@@ -389,14 +388,7 @@ class Inference:
             orig_zoom,
             self.cfg,
             mode=mode,
-            transforms=transforms.Compose(
-                [
-                    ZeroPad2DTest(
-                        (self.cfg.DATA.PADDED_SIZE, self.cfg.DATA.PADDED_SIZE),
-                    ),
-                    ToTensorTest(),
-                ],
-            ),
+            transforms=transforms.Compose([ToTensorTest()]),
         )
 
         test_data_loader = DataLoader(
