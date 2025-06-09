@@ -1131,6 +1131,11 @@ if [[ "$fsaparc" == "1" ]] ; then
     annot="$ldir/${hemi}.aparc.a2009s.annot"
     cmd="mris_ca_label -l $ldir/${hemi}.cortex.label -aseg $mdir/aseg.presurf.mgz -seed 1234 $longflag $subject $hemi $sdir/${hemi}.sphere.reg $CPAtlas $annot"
     RunIt "$cmd" "$LF"
+    if [[ "$long" == "0" ]]
+    then
+      pushd "$ldir" > /dev/null || (echo "Could not cd to $mdir" ; exit 1)
+      softlink_or_copy "${hemi}.aparc.a2009s.annot" "${hemi}.a2009s.annot" "$LF"
+    fi
 
     # DKT Atlas (recon-all -cortparc3):
     longflag=""
@@ -1140,6 +1145,11 @@ if [[ "$fsaparc" == "1" ]] ; then
     annot="$ldir/${hemi}.aparc.DKTatlas.annot"
     cmd="mris_ca_label -l $ldir/${hemi}.cortex.label -aseg $mdir/aseg.presurf.mgz -seed 1234 $longflag $subject $hemi $sdir/${hemi}.sphere.reg $CPAtlas $annot"
     RunIt "$cmd" "$LF"
+    if [[ "$long" == "0" ]]
+    then
+      pushd "$ldir" > /dev/null || (echo "Could not cd to $mdir" ; exit 1)
+      softlink_or_copy "${hemi}.aparc.DKTatlas.annot" "${hemi}.DKTatlas.annot" "$LF"
+    fi
 
   done # hemi loop
 
